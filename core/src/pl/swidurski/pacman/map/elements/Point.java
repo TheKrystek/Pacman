@@ -9,11 +9,11 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by student on 2016-04-10.
  */
-public class Point extends StaticElement<Circle> implements Eatable{
+public class Point extends StaticElement<Circle> implements Eatable {
     public final static int RADIUS = 5;
 
-    public Point(Vector2 position) {
-        super(position);
+    public Point(int nodeId, Vector2 position) {
+        super(nodeId, position);
         setColor(Color.WHITE);
     }
 
@@ -29,13 +29,13 @@ public class Point extends StaticElement<Circle> implements Eatable{
 
     @Override
     protected boolean collides(MapElement<?> element) {
-        if (element.getShape() instanceof  Circle)
+        if (element.getShape() instanceof Circle)
             return Intersector.overlaps(this.getShape(), (Circle) element.getShape());
         return Intersector.overlaps(this.getShape(), (Rectangle) element.getShape());
     }
 
     @Override
-    public double getPoints() {
+    public int getPoints() {
         return 10;
     }
 

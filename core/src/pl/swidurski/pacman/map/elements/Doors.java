@@ -10,27 +10,34 @@ import pl.swidurski.pacman.Const;
 /**
  * Created by student on 2016-04-10.
  */
-public class Wall extends StaticElement<Rectangle> {
-    public static final float SIZE = 40;
+public class Doors extends Wall {
+    public boolean isOpen() {
+        return open;
+    }
 
-    public Wall(int nodeId, Vector2 position) {
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    boolean open = false;
+
+
+    public Doors(int nodeId, Vector2 position) {
         super(nodeId, position);
-        setColor(new Color(Color.valueOf(Const.COLORS_WALLS)));
+        setColor(new Color(Color.valueOf(Const.COLORS_DOORS)));
     }
 
-    @Override
-    protected void init() {
-        shape = new Rectangle(position.x, position.y, SIZE, SIZE);
-    }
 
     @Override
     protected void draw() {
+        if (!open)
         shapeRenderer.rect(shape.x, shape.y, shape.getWidth(), shape.getHeight());
     }
 
-
     @Override
     protected boolean collides(MapElement<?> element) {
-        return Intersector.overlaps((Circle) element.getShape(), this.getShape());
+        if (open)
+            return false;
+        return super.collides(element);
     }
 }

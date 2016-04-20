@@ -10,7 +10,7 @@ import java.util.Optional;
 public enum MapElements {
     WALL('#'),
     PATH('@'),
-    CROSS('X'),
+    INTERSECTION('X'),
     DOORS('D'),
     POINT('o'),
     BIG_POINT('O'),

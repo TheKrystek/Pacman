@@ -10,18 +10,27 @@ import pl.swidurski.pacman.map.Orientation;
  */
 abstract public class MapElement<T> {
     protected Vector2 position;
+    protected T shape;
+    protected Color color;
+    protected int nodeId;
+    private Orientation orientation = Orientation.EAST;
+
+    public MapElement(int nodeId, Vector2 position) {
+        this.nodeId = nodeId;
+        this.position = position;
+        init();
+    }
+
+    public int getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(int nodeId) {
+        this.nodeId = nodeId;
+    }
 
     public T getShape() {
         return shape;
-    }
-
-    protected T shape;
-    protected Color color;
-    private Orientation orientation = Orientation.EAST;
-
-    public MapElement(Vector2 position) {
-        this.position = position;
-        init();
     }
 
     public Vector2 getPosition() {
@@ -43,7 +52,6 @@ abstract public class MapElement<T> {
     abstract protected void init();
 
     public abstract void draw(Batch batch);
-
 
     abstract protected boolean collides(MapElement<?> element);
 

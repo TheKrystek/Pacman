@@ -19,53 +19,81 @@ import java.util.ArrayList;
  * Created by student on 2016-04-10.
  */
 public class MovableObject extends MapElement<Circle> implements Movable {
-    public void setRotator(Rotator rotator) {
-        this.rotator = rotator;
-        this.rotator.setObject(this);
-    }
 
-
-    private Rotator rotator;
+    public final float defaultSpeed = 1;
     protected float speed;
+    Orientation previousOrientation;
     ArrayList<Action> actions = new ArrayList<Action>();
-    private IMapElementAction onCollision;
-
-    public boolean hadCollision() {
-        return hadCollision;
-    }
-
     boolean hadCollision = false;
-
-    public void setAfterMove(IMapElementAction afterMove) {
-        this.afterMove = afterMove;
-    }
-
+    private int node;
+    private Rotator rotator;
+    private IMapElementAction onCollision;
     private IMapElementAction afterMove;
-
-
+    private IMapElementAction onIntersection;
     private Map map;
     private AnimatedObject object;
 
-    public MovableObject(AnimatedObject object, Vector2 startPosition) {
-        super(startPosition);
+    public MovableObject(int nodeId, AnimatedObject object, Vector2 startPosition) {
+        super(nodeId, startPosition);
         this.object = object;
         setRotator(new PacmanRotator());
         setPosition(startPosition);
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 
     public void setSpeed(float speed) {
         this.speed = speed;
     }
 
+    public Orientation getPreviousOrientation() {
+        return previousOrientation;
+    }
+
+    @Override
+    public void setOrientation(Orientation orientation) {
+        previousOrientation = getOrientation();
+        super.setOrientation(orientation);
+    }
+
+    public void setRotator(Rotator rotator) {
+        this.rotator = rotator;
+        this.rotator.setObject(this);
+    }
+
+    public int getNode() {
+        return node;
+    }
+
+    public void setNode(int node) {
+        this.node = node;
+    }
+
+    public boolean hadCollision() {
+        return hadCollision;
+    }
+
+    public void setAfterMove(IMapElementAction afterMove) {
+        this.afterMove = afterMove;
+    }
+
+    public void setOnIntersection(IMapElementAction onIntersection) {
+        this.onIntersection = onIntersection;
+    }
+
     public ArrayList<Action> getActions() {
         return actions;
     }
 
-
-
-
     public void setOnCollision(IMapElementAction onCollision) {
         this.onCollision = onCollision;
+    }
+
+    protected void onIntersection(MapElement<?> element) {
+        if (onIntersection != null)
+            onIntersection.execute(this, element);
     }
 
     protected void onCollision(MapElement<?> element) {
@@ -141,19 +169,42 @@ public class MovableObject extends MapElement<Circle> implements Movable {
         if (map == null)
             return false;
 
+        boolean hasNodeChanged = hasNodeChanged(map);
+
         for (MapElement<?> element : map.getObjects()) {
             if (element == this)
                 continue;
 
-            if (element.collides(this)) {
+            if (element instanceof Intersection && this.collides(element) && hasNodeChanged)
+                onIntersection(element);
+
+            if (element.collides(this) && this.collides(element)) {
                 onCollision(element);
                 hadCollision = true;
                 return true;
             }
         }
-        if (!hadCollision)
+        if (!hadCollision())
             afterMove();
+
         hadCollision = false;
+        return false;
+    }
+
+    private boolean hasNodeChanged(Map map) {
+        float half = Wall.SIZE / 2;
+        float X = (int) ((this.getPosition().x) / Wall.SIZE);
+        float Y = (int) ((this.getPosition().y) / Wall.SIZE);
+
+        Rectangle r = new Rectangle((X * Wall.SIZE) + half, (Y * Wall.SIZE) + half, 8, 8);
+
+        if (r.contains(this.getPosition().cpy().add(half, half))) {
+            int node = map.getNodeId(this.getPosition());
+            if (node != this.getNode()) {
+                this.setNode(node);
+                return true;
+            }
+        }
         return false;
     }
 
@@ -176,7 +227,7 @@ public class MovableObject extends MapElement<Circle> implements Movable {
 
     @Override
     protected boolean collides(MapElement<?> element) {
-        if (element.getShape() instanceof  Circle)
+        if (element.getShape() instanceof Circle)
             return Intersector.overlaps(this.getShape(), (Circle) element.getShape());
         return Intersector.overlaps(this.getShape(), (Rectangle) element.getShape());
     }

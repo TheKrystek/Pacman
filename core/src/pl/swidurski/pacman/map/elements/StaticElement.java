@@ -10,12 +10,12 @@ import com.badlogic.gdx.math.Vector2;
 abstract public class StaticElement<T> extends MapElement<T> {
     protected ShapeRenderer shapeRenderer;
 
-    public StaticElement(float x, float y) {
-        this(new Vector2(x, y));
+    public StaticElement(int nodeId, float x, float y) {
+        this(nodeId, new Vector2(x, y));
     }
 
-    public StaticElement(Vector2 position) {
-        super(position);
+    public StaticElement(int nodeId, Vector2 position) {
+        super(nodeId, position);
         shapeRenderer = new ShapeRenderer();
     }
 
@@ -25,7 +25,7 @@ abstract public class StaticElement<T> extends MapElement<T> {
     public void draw(Batch batch) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         if (color != null)
-        shapeRenderer.setColor(color);
+            shapeRenderer.setColor(color);
         draw();
         shapeRenderer.end();
     }

@@ -1,18 +1,16 @@
 package pl.swidurski.pacman.map.elements;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by student on 2016-04-10.
  */
-public class BigPoint extends Point{
+public class BigPoint extends Point {
     public final static int RADIUS = 10;
 
-    public BigPoint(Vector2 position) {
-        super(position);
+    public BigPoint(int counter, Vector2 position) {
+        super(counter, position);
     }
 
     @Override
@@ -22,7 +20,7 @@ public class BigPoint extends Point{
 
 
     @Override
-    public double getPoints() {
+    public int getPoints() {
         return 50;
     }
 }

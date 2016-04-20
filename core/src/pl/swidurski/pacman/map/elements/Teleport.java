@@ -12,9 +12,10 @@ import pl.swidurski.pacman.map.Orientation;
  */
 public class Teleport extends StaticElement<Rectangle> {
     public static final float SIZE = 40;
+    private Teleport exit;
 
-    public Teleport(Vector2 position) {
-        super(position.x,position.y);
+    public Teleport(int nodeId, Vector2 position) {
+        super(nodeId, position.x, position.y);
         setColor(Color.GREEN);
     }
 
@@ -28,20 +29,21 @@ public class Teleport extends StaticElement<Rectangle> {
             exit.setExit(this);
     }
 
-    private Teleport exit;
-
-
     public Vector2 getExitPosition(Orientation orientation) {
         Vector2 position = getExit().getPosition().cpy();
         float step = Wall.SIZE + 2;
         switch (orientation) {
-            case NORTH: position.sub(0,step);
+            case NORTH:
+                position.sub(0, step);
                 break;
-            case SOUTH: position.add(0,step);
+            case SOUTH:
+                position.add(0, step);
                 break;
-            case WEST: position.sub(step,0);
+            case WEST:
+                position.sub(step, 0);
                 break;
-            case EAST: position.add(step,0);
+            case EAST:
+                position.add(step, 0);
                 break;
         }
         return position.cpy();

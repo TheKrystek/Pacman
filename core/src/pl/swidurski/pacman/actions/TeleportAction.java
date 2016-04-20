@@ -1,7 +1,6 @@
 package pl.swidurski.pacman.actions;
 
 import com.badlogic.gdx.math.Vector2;
-import pl.swidurski.pacman.actions.Action;
 import pl.swidurski.pacman.map.Map;
 import pl.swidurski.pacman.map.elements.MapElement;
 import pl.swidurski.pacman.map.elements.MovableObject;
@@ -18,9 +17,7 @@ public class TeleportAction implements Action {
             return;
 
         Teleport teleport = (Teleport) element;
-        System.out.printf("Teleport Entry=%s, Exit=%s\r\n", teleport.getPosition(), teleport.getExit().getPosition());
-
-        Vector2 exit = teleport.getExitPosition(map.getPacman().getOrientation());
-        map.getPacman().setPosition(exit);
+        Vector2 exit = teleport.getExitPosition(source.getOrientation());
+        source.setPosition(exit);
     }
 }
