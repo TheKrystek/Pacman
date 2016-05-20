@@ -1,23 +1,40 @@
 package pl.swidurski.pacman.map.elements;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import pl.swidurski.pacman.AnimatedObject;
 import pl.swidurski.pacman.Const;
 import pl.swidurski.pacman.actions.EatPacmanAction;
-import pl.swidurski.pacman.actions.HuntAction;
-import pl.swidurski.pacman.actions.SleepAction;
+import pl.swidurski.pacman.actions.ChaseAction;
 import pl.swidurski.pacman.actions.TeleportAction;
 import pl.swidurski.pacman.map.Map;
 import pl.swidurski.pacman.map.Orientation;
 import pl.swidurski.pacman.utils.GhostRotator;
+
+import java.util.LinkedList;
 
 /**
  * Created by Krystek on 2016-04-10.
  */
 public class Ghost extends MovableObject implements Eatable {
 
-    HuntAction movingAction;
+    public GhostColors getType() {
+        return type;
+    }
+
+    private GhostColors type;
+
+    public LinkedList<Path> getPath() {
+        return path;
+    }
+
+    public void setPath(LinkedList<Path> path) {
+        this.path = path;
+    }
+
+    LinkedList<Path> path;
+    ChaseAction movingAction;
     int offset;
 
     private boolean isEatable = false;
@@ -36,8 +53,9 @@ public class Ghost extends MovableObject implements Eatable {
         if (ghostColor.canUseTeleport())
             ghost.actions.add(new TeleportAction());
         ghost.setOffset(ghostColor.getOffset());
-        ghost.movingAction = new HuntAction(ghost.getOffset());
+        ghost.movingAction = new ChaseAction(ghost.getOffset());
         ghost.actions.add(new EatPacmanAction());
+        ghost.setType(ghostColor);
         return ghost;
     }
 
@@ -49,11 +67,11 @@ public class Ghost extends MovableObject implements Eatable {
         this.offset = offset;
     }
 
-    public HuntAction getMovingAction() {
+    public ChaseAction getMovingAction() {
         return movingAction;
     }
 
-    public void setMovingAction(HuntAction movingAction) {
+    public void setMovingAction(ChaseAction movingAction) {
         this.movingAction = movingAction;
     }
 
@@ -93,23 +111,34 @@ public class Ghost extends MovableObject implements Eatable {
         return super.collides(element);
     }
 
+    public void setType(GhostColors type) {
+        this.type = type;
+    }
+
 
     public enum GhostColors {
-        BLUE("blue_ghost.png", true, 2, 0.9f),
-        YELLOW("yellow_ghost.png", false, 5, 1.05f),
-        RED("red_ghost.png", true, 0, 0.95f),
-        PINK("pink_ghost.png", false, 0, 0.70f);
+        BLUE("blue_ghost.png", true, 2, 0.9f, Color.BLUE),
+        YELLOW("yellow_ghost.png", false, 5, 1.05f, Color.YELLOW),
+        RED("red_ghost.png", true, 0, 0.95f, Color.RED),
+        PINK("pink_ghost.png", false, 0, 0.70f, Color.PINK);
 
         private final String filename;
         private final boolean canUseTeleport;
         private final int offset;
         private final float speed;
 
-        GhostColors(String filename, boolean canUseTeleport, int offset, float speed) {
+        public Color getColor() {
+            return color;
+        }
+
+        private final Color color;
+
+        GhostColors(String filename, boolean canUseTeleport, int offset, float speed, Color color) {
             this.filename = filename;
             this.canUseTeleport = canUseTeleport;
             this.offset = offset;
             this.speed = speed;
+            this.color = color;
         }
 
         public static String getFilename(String filename) {

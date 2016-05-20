@@ -35,7 +35,7 @@ public class ChangeBehaviourAction implements Action {
                 map.getPacman().setSpeed(1f);
                 for (Ghost ghost : map.getGhosts()) {
                     if (ghost.getMovingAction() instanceof RunAction)
-                        ghost.setMovingAction(new HuntAction(ghost.getOffset()));
+                        ghost.setMovingAction(new ChaseAction(ghost.getOffset()));
                     Gdx.app.postRunnable(() -> ghost.setEatable(false));
                 }
             }

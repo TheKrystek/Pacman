@@ -64,6 +64,8 @@ public class MovableObject extends MapElement<Circle> implements Movable {
     }
 
     public int getNode() {
+        if (node == 0)
+            return getNodeId();
         return node;
     }
 

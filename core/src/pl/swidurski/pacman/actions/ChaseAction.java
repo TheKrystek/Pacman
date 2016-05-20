@@ -2,6 +2,7 @@ package pl.swidurski.pacman.actions;
 
 import pl.swidurski.pacman.map.Map;
 import pl.swidurski.pacman.map.Orientation;
+import pl.swidurski.pacman.map.elements.Ghost;
 import pl.swidurski.pacman.map.elements.MapElement;
 import pl.swidurski.pacman.map.elements.MovableObject;
 import pl.swidurski.pacman.map.elements.Path;
@@ -12,14 +13,14 @@ import java.util.LinkedList;
 /**
  * Created by Krystek on 2016-04-13.
  */
-public class HuntAction implements Action {
+public class ChaseAction implements Action {
 
     private final int offset;
 
     DijkstraAlgorithm dijkstra;
-    LinkedList<Path> path;
 
-    public HuntAction(int offset) {
+
+    public ChaseAction(int offset) {
         this.offset = offset;
     }
 
@@ -27,6 +28,8 @@ public class HuntAction implements Action {
     public void execute(MovableObject source, MapElement<?> element, Map map) {
         if (dijkstra == null)
             dijkstra = new DijkstraAlgorithm(map.getGraph());
+
+        Ghost ghost = (Ghost) source;
 
         // Pobierz lokalizację pacmana i duszka
         int currentPosition = source.getNode();
@@ -37,17 +40,17 @@ public class HuntAction implements Action {
 
         // Wskaż start i cel
         dijkstra.execute(map.getMapElements().get(source.getNode()));
-        path = dijkstra.getPath(map.getMapElements().get(pacmanCurrentNode));
+        ghost.setPath(dijkstra.getPath(map.getMapElements().get(pacmanCurrentNode)));
 
 
         // Jeżeli ścieżka jest pusta - nie zmieniaj kierunku
-        if (path == null)
+        if (ghost.getPath() == null)
             return;
 
         // Jeżeli aktualnie jesteśmy na pierwszym polu ścieżki, to pobieramy następne
-        Path p = path.poll();
+        Path p = ghost.getPath().get(0);
         if (p.getNodeId() == currentPosition)
-            p = path.poll();
+            p = ghost.getPath().get(1);
 
         source.setOrientation(getOrientation(currentPosition, p.getNodeId(), map.getCols()));
     }

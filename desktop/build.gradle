@@ -30,6 +30,8 @@ dist.dependsOn classes
 eclipse {
     project {
         name = appName + "-desktop"
+        sourceCompatibility = "1.8"
+        targetCompatibility = "1.8"
         linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/core/assets'
     }
 }

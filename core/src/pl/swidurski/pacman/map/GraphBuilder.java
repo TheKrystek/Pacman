@@ -65,6 +65,7 @@ public class GraphBuilder {
         if (target == null || target < 0)
             return;
         Edge lane = new Edge(nodes.get(source), nodes.get(target));
+        System.out.println(lane);
         lanes.add(lane);
     }
 

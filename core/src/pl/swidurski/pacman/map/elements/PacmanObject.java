@@ -26,14 +26,48 @@ public class PacmanObject extends MovableObject {
 
     @Override
     public Circle move() {
-        if (Gdx.input.isKeyPressed(Input.Keys.UP))
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) && getUp(getNode()))
             return moveUp(speed);
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) && getDown(getNode()))
             return moveDown(speed);
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && getLeft(getNode()))
             return moveLeft(speed);
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && getRight(getNode()))
             return moveRight(speed);
         return getShape();
     }
+
+
+    private boolean getLeft(int nodeId) {
+        // Pierwsze w rzędzie
+        if (nodeId % getMap().getCols() == 0)
+            return false;
+        return getElement(nodeId - 1);
+    }
+
+    private boolean getRight(int nodeId) {
+        // Ostatnie w rzędzie
+        if (nodeId + 1 == getMap().getCols())
+            return false;
+        return getElement(nodeId + 1);
+    }
+
+    private boolean getUp(int nodeId) {
+        // Ostatni rząd
+        if (nodeId >= (getMap().getRows() - 1) * getMap().getCols())
+            return false;
+        return getElement(nodeId + getMap().getCols());
+    }
+
+    private boolean getDown(int nodeId) {
+        // Pierwszy rząd
+        if (nodeId < getMap().getCols())
+            return false;
+        return getElement(nodeId - getMap().getCols());
+    }
+
+    private boolean getElement(int node) {
+        return getMap().getMapElements().containsKey(node);
+    }
+
 }
